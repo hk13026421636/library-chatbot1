@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>图书馆智能问答系统</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--accent:#3E756E;--accent-l:#5A9B92;--warm:#D4845A;--bg:#EBE7DF;--card:rgba(255,255,255,.92);--text:#263836;--sub:#8A9690;--border:#D8D2C6}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans SC',sans-serif;height:100vh;overflow:hidden;background:var(--bg)}
+
+/* ===== 动态背景 ===== */
+.scene{position:fixed;inset:0;z-index:0;background:linear-gradient(155deg,#E4E0D6 0%,#D6DED8 35%,#E0DAD0 65%,#D8E2DE 100%)}
+
+/* 浮动几何色块 */
+.geo{position:absolute;opacity:.08;animation:morph 28s ease-in-out infinite}
+.g1{width:600px;height:600px;background:var(--accent);top:-15%;left:-8%;clip-path:polygon(25% 0%,100% 0%,75% 100%,0% 100%);animation-delay:0s}
+.g2{width:500px;height:500px;background:var(--warm);bottom:-12%;right:-6%;clip-path:polygon(50% 0%,100% 38%,82% 100%,18% 100%,0% 38%);animation-delay:-9s}
+.g3{width:400px;height:400px;background:#7BA898;top:30%;left:55%;clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);animation-delay:-18s}
+.g4{width:300px;height:300px;background:#B0885A;top:60%;left:10%;clip-path:circle(50%);animation-delay:-5s}
+@keyframes morph{
+  0%,100%{transform:translate(0,0) rotate(0deg) scale(1)}
+  25%{transform:translate(30px,-40px) rotate(8deg) scale(1.06)}
+  50%{transform:translate(-20px,25px) rotate(-5deg) scale(.95)}
+  75%{transform:translate(15px,40px) rotate(6deg) scale(1.03)}
+}
+
+/* 网格纹理覆盖 */
+.scene::after{content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(60,80,75,.03) 1px,transparent 1px);
+  background-size:32px 32px;pointer-events:none}
+
+/* 漂浮粒子 */
+.particles{position:fixed;inset:0;z-index:1;pointer-events:none}
+.p{position:absolute;background:rgba(62,117,110,.15);animation:rise 18s linear infinite}
+@keyframes rise{
+  0%{transform:translateY(105vh) scale(.2);opacity:0}
+  12%{opacity:1}
+  88%{opacity:.3}
+  100%{transform:translateY(-5vh) scale(1);opacity:0}
+}
+
+/* ===== 登录卡片 ===== */
+.wrap{position:relative;z-index:10;display:flex;align-items:center;justify-content:center;height:100vh;padding:20px}
+
+.card{width:920px;display:flex;background:var(--card);backdrop-filter:blur(28px);
+  box-shadow:0 4px 60px rgba(0,0,0,.06),0 1px 3px rgba(0,0,0,.04);
+  animation:cardUp .7s cubic-bezier(.22,1,.36,1)}
+@keyframes cardUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* 左侧品牌区 */
+.brand{width:380px;background:linear-gradient(165deg,var(--accent) 0%,var(--accent-l) 60%,#7BB4A8 100%);
+  color:#fff;padding:56px 40px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
+
+.brand-deco{position:absolute;width:240px;height:240px;border:2px solid rgba(255,255,255,.08);
+  bottom:-60px;right:-60px;animation:spin 40s linear infinite}
+.brand-deco2{position:absolute;width:160px;height:160px;border:1px solid rgba(255,255,255,.06);
+  top:20px;right:30px;transform:rotate(45deg);animation:spin 30s linear infinite reverse}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+.brand-badge{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:500;
+  background:rgba(255,255,255,.12);padding:6px 14px;margin-bottom:28px;width:fit-content;letter-spacing:.5px}
+.brand h2{font-size:28px;font-weight:900;line-height:1.4;margin-bottom:14px;letter-spacing:1px}
+.brand p{font-size:13px;line-height:2;opacity:.82;font-weight:300}
+
+.features{margin-top:36px;display:flex;flex-direction:column;gap:14px}
+.feat{display:flex;align-items:center;gap:12px;font-size:13px;font-weight:400;opacity:.78}
+.feat-dot{width:32px;height:32px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+
+/* 右侧表单区 */
+.form-side{flex:1;padding:48px 44px;display:flex;flex-direction:column;justify-content:center}
+
+.form-head h3{font-size:24px;font-weight:700;color:var(--text);margin-bottom:6px}
+.form-head .desc{font-size:13px;color:var(--sub);margin-bottom:28px}
+
+/* Tab切换 */
+.form-tabs{display:flex;border-bottom:2px solid #E8E2D6;margin-bottom:26px}
+.ftab{padding:10px 28px;font-size:14px;font-weight:500;color:var(--sub);cursor:pointer;
+  border-bottom:2px solid transparent;margin-bottom:-2px;transition:.25s;user-select:none}
+.ftab:hover{color:var(--accent)}
+.ftab.on{color:var(--accent);border-color:var(--accent);font-weight:600}
+.fpanel{display:none}.fpanel.on{display:block;animation:fadeX .3s ease}
+@keyframes fadeX{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:translateX(0)}}
+
+/* 输入框 */
+.field{margin-bottom:18px;position:relative}
+.field label{display:block;font-size:12px;font-weight:500;color:#5A6A64;margin-bottom:5px;letter-spacing:.3px}
+.field input{width:100%;padding:12px 14px;border:1.5px solid var(--border);background:rgba(255,255,255,.6);
+  font-size:14px;color:var(--text);outline:none;transition:.25s;font-family:inherit}
+.field input:focus{border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(62,117,110,.06)}
+.field input::placeholder{color:#B0B8B2}
+
+/* 提交按钮 */
+.submit{width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent-l));
+  color:#fff;border:none;font-size:14px;font-weight:600;cursor:pointer;transition:.25s;
+  font-family:inherit;letter-spacing:1.5px;margin-top:8px;position:relative;overflow:hidden}
+.submit:hover{filter:brightness(1.08);box-shadow:0 4px 20px rgba(62,117,110,.25)}
+.submit:active{transform:scale(.99)}
+
+/* Flash消息 */
+.flash{padding:10px 14px;margin-bottom:16px;font-size:13px;border-left:3px solid;animation:fadeX .3s}
+.flash.error{background:#FEF2EF;border-color:#D06050;color:#A04030}
+.flash.success{background:#EEF6F0;border-color:#5A9B92;color:#2A6A5C}
+
+.form-foot{margin-top:28px;text-align:center;font-size:11px;color:#B8C0BA;letter-spacing:.5px}
+
+@media(max-width:768px){
+  .card{flex-direction:column;width:95%;max-width:440px}
+  .brand{width:100%;padding:30px 28px}.features{display:none}
+  .form-side{padding:28px 24px}
+}
+</style>
+</head>
+<body>
+
+<div class="scene">
+  <div class="geo g1"></div><div class="geo g2"></div>
+  <div class="geo g3"></div><div class="geo g4"></div>
+</div>
+<div class="particles" id="pts"></div>
+
+<div class="wrap">
+  <div class="card">
+
+    <div class="brand">
+      <div class="brand-deco"></div>
+      <div class="brand-deco2"></div>
+      <div class="brand-badge">SMART LIBRARY</div>
+      <h2>图书馆<br>智能问答系统</h2>
+      <p>基于自然语言处理技术，为你提供全天候不间断的图书馆智能咨询服务</p>
+      <div class="features">
+        <div class="feat"><div class="feat-dot">Q</div><span>智能对话  即问即答</span></div>
+        <div class="feat"><div class="feat-dot">B</div><span>万册馆藏  一键检索</span></div>
+        <div class="feat"><div class="feat-dot">AI</div><span>    有问必答</span></div>
+      </div>
+    </div>
+
+    <div class="form-side">
+      <div class="form-head">
+        <h3>欢迎使用</h3>
+        <div class="desc">登录你的账号，开始智能问答服务</div>
+      </div>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for cat, msg in messages %}
+          <div class="flash {{ cat }}">{{ msg }}</div>
+        {% endfor %}
+      {% endwith %}
+
+      <div class="form-tabs">
+        <div class="ftab on" onclick="tab(0)">登录</div>
+        <div class="ftab" onclick="tab(1)">注册</div>
+      </div>
+
+      <div class="fpanel on" id="fp0">
+        <form action="{{ url_for('login') }}" method="POST">
+          <div class="field"><label>用户名</label><input name="username" placeholder="请输入用户名" required autocomplete="username"></div>
+          <div class="field"><label>密码</label><input name="password" type="password" placeholder="请输入密码" required autocomplete="current-password"></div>
+          <button class="submit" type="submit">登 录</button>
+        </form>
+      </div>
+
+      <div class="fpanel" id="fp1">
+        <form action="{{ url_for('register') }}" method="POST">
+          <div class="field"><label>用户名</label><input name="username" placeholder="请输入用户名" required></div>
+          <div class="field"><label>邮箱</label><input name="email" type="email" placeholder="请输入邮箱" required></div>
+          <div class="field"><label>密码</label><input name="password" type="password" placeholder="请输入密码（至少6位）" required></div>
+          <div class="field"><label>确认密码</label><input name="confirm_password" type="password" placeholder="请再次输入密码" required></div>
+          <button class="submit" type="submit">注 册</button>
+        </form>
+      </div>
+
+      <div class="form-foot">高校图书馆智能问答机器人系统 &copy; 2025</div>
+    </div>
+  </div>
+</div>
+
+<script>
+function tab(i){
+  document.querySelectorAll('.ftab').forEach((t,j)=>t.classList.toggle('on',j===i));
+  document.querySelectorAll('.fpanel').forEach((p,j)=>p.classList.toggle('on',j===i));
+}
+const pc=document.getElementById('pts');
+for(let i=0;i<28;i++){
+  const d=document.createElement('div');d.className='p';
+  d.style.left=Math.random()*100+'%';
+  const s=2+Math.random()*5;d.style.width=s+'px';d.style.height=s+'px';
+  d.style.borderRadius=Math.random()>.5?'50%':'0';
+  d.style.animationDelay=Math.random()*18+'s';
+  d.style.animationDuration=(12+Math.random()*12)+'s';
+  pc.appendChild(d);
+}
+</script>
+</body>
+</html>

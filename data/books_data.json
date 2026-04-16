@@ -1,0 +1,29 @@
+{
+  "books": [
+    {"title":"Python编程从入门到实践","author":"埃里克·马瑟斯","publisher":"人民邮电出版社","isbn":"9787115546081","publish_year":2020,"category":"计算机","call_number":"TP311.561/1","location":"三楼A区2排","total_copies":5,"available_copies":2,"description":"Python入门经典教材"},
+    {"title":"数据结构与算法分析","author":"马克·艾伦·维斯","publisher":"机械工业出版社","isbn":"9787111525950","publish_year":2019,"category":"计算机","call_number":"TP311.12/3","location":"三楼A区3排","total_copies":3,"available_copies":1,"description":"数据结构经典教材"},
+    {"title":"机器学习","author":"周志华","publisher":"清华大学出版社","isbn":"9787302423287","publish_year":2016,"category":"计算机","call_number":"TP181/2","location":"三楼B区1排","total_copies":4,"available_copies":0,"description":"西瓜书，机器学习经典"},
+    {"title":"深度学习","author":"伊恩·古德费洛","publisher":"人民邮电出版社","isbn":"9787115461476","publish_year":2017,"category":"计算机","call_number":"TP181/5","location":"三楼B区1排","total_copies":3,"available_copies":1,"description":"深度学习奠基之作"},
+    {"title":"自然语言处理入门","author":"何晗","publisher":"人民邮电出版社","isbn":"9787115519405","publish_year":2019,"category":"计算机","call_number":"TP391/8","location":"三楼B区2排","total_copies":2,"available_copies":2,"description":"NLP入门教材"},
+    {"title":"Flask Web开发","author":"米格尔·格林贝格","publisher":"人民邮电出版社","isbn":"9787115373991","publish_year":2015,"category":"计算机","call_number":"TP393/12","location":"三楼A区4排","total_copies":2,"available_copies":1,"description":"Flask框架开发实战"},
+    {"title":"统计学习方法","author":"李航","publisher":"清华大学出版社","isbn":"9787302517276","publish_year":2019,"category":"计算机","call_number":"TP181/9","location":"三楼B区1排","total_copies":3,"available_copies":2,"description":"统计学习经典教材"},
+    {"title":"计算机网络","author":"谢希仁","publisher":"电子工业出版社","isbn":"9787121302954","publish_year":2017,"category":"计算机","call_number":"TP393/3","location":"三楼A区5排","total_copies":5,"available_copies":2,"description":"计网教材"},
+    {"title":"红楼梦","author":"曹雪芹","publisher":"人民文学出版社","isbn":"9787020002207","publish_year":2008,"category":"文学","call_number":"I242.4/1","location":"二楼C区3排","total_copies":6,"available_copies":4,"description":"四大名著之一"},
+    {"title":"三体","author":"刘慈欣","publisher":"重庆出版社","isbn":"9787536692930","publish_year":2008,"category":"文学","call_number":"I247.5/15","location":"二楼C区4排","total_copies":5,"available_copies":1,"description":"中国科幻里程碑"},
+    {"title":"活着","author":"余华","publisher":"作家出版社","isbn":"9787506365437","publish_year":2012,"category":"文学","call_number":"I247.5/22","location":"二楼C区4排","total_copies":4,"available_copies":3,"description":"余华经典长篇小说"},
+    {"title":"百年孤独","author":"加西亚·马尔克斯","publisher":"南海出版公司","isbn":"9787544253994","publish_year":2011,"category":"文学","call_number":"I775.4/1","location":"二楼D区1排","total_copies":3,"available_copies":2,"description":"魔幻现实主义代表作"},
+    {"title":"高等数学","author":"同济大学数学系","publisher":"高等教育出版社","isbn":"9787040396638","publish_year":2014,"category":"数学","call_number":"O13/1","location":"三楼C区1排","total_copies":10,"available_copies":3,"description":"高数经典教材"},
+    {"title":"线性代数","author":"同济大学数学系","publisher":"高等教育出版社","isbn":"9787040396621","publish_year":2014,"category":"数学","call_number":"O151.2/1","location":"三楼C区1排","total_copies":8,"available_copies":5,"description":"线代教材"},
+    {"title":"概率论与数理统计","author":"浙江大学","publisher":"高等教育出版社","isbn":"9787040238969","publish_year":2008,"category":"数学","call_number":"O211/2","location":"三楼C区2排","total_copies":7,"available_copies":4,"description":"概率统计教材"},
+    {"title":"经济学原理","author":"曼昆","publisher":"北京大学出版社","isbn":"9787301256510","publish_year":2015,"category":"经济","call_number":"F0/5","location":"二楼A区2排","total_copies":4,"available_copies":2,"description":"经济学入门经典"},
+    {"title":"西方哲学史","author":"罗素","publisher":"商务印书馆","isbn":"9787100004725","publish_year":2003,"category":"哲学","call_number":"B5/1","location":"二楼B区1排","total_copies":3,"available_copies":2,"description":"哲学经典著作"},
+    {"title":"人类简史","author":"尤瓦尔·赫拉利","publisher":"中信出版社","isbn":"9787508660752","publish_year":2017,"category":"历史","call_number":"K02/3","location":"二楼E区1排","total_copies":4,"available_copies":1,"description":"人类演化史"},
+    {"title":"心理学与生活","author":"理查德·格里格","publisher":"人民邮电出版社","isbn":"9787115369208","publish_year":2014,"category":"心理学","call_number":"B84/6","location":"二楼B区3排","total_copies":3,"available_copies":2,"description":"心理学入门"},
+    {"title":"大学英语综合教程","author":"李荫华","publisher":"上海外语教育出版社","isbn":"9787544631723","publish_year":2015,"category":"外语","call_number":"H319.4/8","location":"二楼F区1排","total_copies":12,"available_copies":6,"description":"大学英语教材"},
+    {"title":"操作系统概念","author":"Abraham Silberschatz","publisher":"高等教育出版社","isbn":"9787040513219","publish_year":2018,"category":"计算机","call_number":"TP316/2","location":"三楼A区3排","total_copies":4,"available_copies":2,"description":"操作系统经典教材"},
+    {"title":"数据库系统概论","author":"王珊","publisher":"高等教育出版社","isbn":"9787040406641","publish_year":2014,"category":"计算机","call_number":"TP311.13/1","location":"三楼A区4排","total_copies":6,"available_copies":3,"description":"数据库经典教材"},
+    {"title":"C程序设计语言","author":"Brian W. Kernighan","publisher":"机械工业出版社","isbn":"9787111128069","publish_year":2004,"category":"计算机","call_number":"TP312/1","location":"三楼A区1排","total_copies":4,"available_copies":3,"description":"C语言圣经"},
+    {"title":"围城","author":"钱钟书","publisher":"人民文学出版社","isbn":"9787020024759","publish_year":1991,"category":"文学","call_number":"I246.5/3","location":"二楼C区2排","total_copies":3,"available_copies":2,"description":"钱钟书经典小说"},
+    {"title":"平凡的世界","author":"路遥","publisher":"人民文学出版社","isbn":"9787020070664","publish_year":2009,"category":"文学","call_number":"I247.5/8","location":"二楼C区3排","total_copies":5,"available_copies":3,"description":"路遥经典三部曲"}
+  ]
+}

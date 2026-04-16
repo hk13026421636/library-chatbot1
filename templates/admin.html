@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>管理后台 - 图书馆智能问答系统</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F3F0EA;--card:#fff;--border:#E2DCD2;--text:#2C3E3E;--sub:#8A9690;--accent:#4E857E;--accent2:#D4845A;--hover:#E8F0EE}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* 顶栏 */
+.topnav{background:linear-gradient(135deg,#3E756E,#4E857E);color:#fff;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;position:sticky;top:0;z-index:100}
+.topnav h1{font-size:15px;font-weight:600;letter-spacing:.5px}
+.topnav-r{display:flex;gap:20px}
+.topnav-r a{color:rgba(255,255,255,.8);text-decoration:none;font-size:13px;transition:.2s}
+.topnav-r a:hover{color:#fff}
+
+/* 统计卡片 */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:24px 32px 16px}
+.stat-card{background:var(--card);padding:22px 20px;border:1px solid var(--border);display:flex;align-items:center;gap:16px;transition:.2s}
+.stat-card:hover{box-shadow:0 2px 12px rgba(0,0,0,.04);transform:translateY(-1px)}
+.stat-ico{width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;letter-spacing:-1px}
+.stat-num{font-size:28px;font-weight:700;line-height:1}
+.stat-lb{font-size:12px;color:var(--sub);margin-top:4px}
+
+/* 主内容 */
+.main-content{padding:0 32px 40px}
+
+/* 选项卡 */
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:20px}
+.tab{padding:12px 28px;font-size:14px;font-weight:500;color:var(--sub);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:.2s;user-select:none}
+.tab:hover{color:var(--accent)}
+.tab.on{color:var(--accent);border-color:var(--accent);font-weight:600}
+.pane{display:none}.pane.on{display:block;animation:fadeUp .25s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* 工具栏 */
+.tbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.tbar h3{font-size:17px;font-weight:600}
+.tbar-r{display:flex;gap:8px;align-items:center}
+.btn{padding:8px 16px;font-size:12px;font-family:inherit;cursor:pointer;transition:.2s;border:1px solid;display:inline-flex;align-items:center;gap:5px;font-weight:500}
+.btn-a{background:var(--accent);color:#fff;border-color:var(--accent)}.btn-a:hover{filter:brightness(.92)}
+.btn-w{background:var(--accent2);color:#fff;border-color:var(--accent2)}.btn-w:hover{filter:brightness(.92)}
+.btn-g{background:var(--card);color:var(--accent);border-color:var(--border)}.btn-g:hover{background:var(--hover)}
+.btn-r{background:var(--card);color:#C0605A;border-color:#C0605A}.btn-r:hover{background:#FEF0EC}
+.btn-s{padding:5px 10px;font-size:11px}
+.sch{padding:8px 14px;border:1px solid var(--border);font-size:12px;width:240px;outline:none;font-family:inherit;background:var(--card);transition:.2s}
+.sch:focus{border-color:var(--accent)}
+
+/* 表格 */
+.tbl{width:100%;background:var(--card);border:1px solid var(--border);border-collapse:collapse}
+.tbl th,.tbl td{padding:11px 16px;text-align:left;border-bottom:1px solid #F0EBE3;font-size:12px;vertical-align:middle}
+.tbl th{background:#FAF8F4;font-weight:600;color:#6A7A74;font-size:11px;letter-spacing:.3px}
+.tbl tbody tr:hover{background:#FAFAF6}
+.tbl-wrap{max-height:500px;overflow-y:auto;border:1px solid var(--border)}
+.tbl-wrap .tbl{border:none}
+.cat-tag{display:inline-block;padding:2px 10px;font-size:10px;font-weight:500}
+.role-tag{padding:2px 8px;font-size:10px;font-weight:600}
+.role-admin{background:#E8F0EE;color:var(--accent)}
+.role-user{background:#F5F0E8;color:#A09080}
+.trunc{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+
+/* 模态框 */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;justify-content:center;align-items:center}
+.modal-bg.show{display:flex}
+.modal{background:var(--card);width:500px;max-height:85vh;overflow-y:auto;padding:28px 32px}
+.modal h3{font-size:17px;font-weight:600;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.fg{margin-bottom:16px}
+.fg label{display:block;font-size:12px;font-weight:500;color:#5A6A64;margin-bottom:5px}
+.fg input,.fg select,.fg textarea{width:100%;padding:10px 14px;border:1.5px solid var(--border);font-size:13px;font-family:inherit;color:var(--text);outline:none;transition:.2s;background:var(--card)}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent)}
+.fg textarea{min-height:72px;resize:vertical}
+.modal-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}
+
+/* Toast */
+.toast{position:fixed;top:66px;right:32px;padding:12px 20px;background:var(--card);border-left:3px solid var(--accent);box-shadow:0 4px 16px rgba(0,0,0,.08);font-size:13px;z-index:300;animation:slideIn .3s ease}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+
+@media(max-width:900px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <h1>系统管理后台</h1>
+  <div class="topnav-r">
+    <a href="{{ url_for('chat') }}">返回对话</a>
+    <a href="{{ url_for('logout') }}">退出登录</a>
+  </div>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="stat-ico" style="background:#E8F0EE;color:var(--accent)">FAQ</div>
+    <div><div class="stat-num">{{ stats.faq_count }}</div><div class="stat-lb">知识库条目</div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-ico" style="background:#FEF3EC;color:var(--accent2)">B</div>
+    <div><div class="stat-num">{{ stats.book_count }}</div><div class="stat-lb">馆藏图书</div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-ico" style="background:#EEF2E8;color:#5A9E7E">U</div>
+    <div><div class="stat-num">{{ stats.user_count }}</div><div class="stat-lb">注册用户</div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-ico" style="background:#F0ECF6;color:#7B6DAD">C</div>
+    <div><div class="stat-num">{{ stats.chat_count }}</div><div class="stat-lb">对话记录</div></div>
+  </div>
+</div>
+
+<div class="main-content">
+  <div class="tabs">
+    <div class="tab on" onclick="switchTab(0)">FAQ知识库</div>
+    <div class="tab" onclick="switchTab(1)">馆藏书目</div>
+    <div class="tab" onclick="switchTab(2)">用户管理</div>
+  </div>
+
+  <!-- ====== FAQ面板 ====== -->
+  <div class="pane on" id="pane0">
+    <div class="tbar">
+      <h3>FAQ知识库管理</h3>
+      <div class="tbar-r">
+        <input class="sch" placeholder="搜索FAQ..." oninput="filterRows('faqTbl',this.value)">
+        <button class="btn btn-g" onclick="location.href='/api/admin/faq/export'">导出</button>
+        <label class="btn btn-g" style="cursor:pointer">导入<input type="file" accept=".json" style="display:none" onchange="importFaq(this)"></label>
+        <button class="btn btn-a" onclick="openFaqModal()">添加FAQ</button>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+    <table class="tbl" id="faqTbl">
+      <thead><tr><th style="width:40px">ID</th><th style="width:80px">分类</th><th>问题</th><th>答案</th><th style="width:50px">命中</th><th style="width:100px">操作</th></tr></thead>
+      <tbody>
+      {% for f in faqs %}
+      <tr>
+        <td>{{ f.id }}</td>
+        <td>{% if f.category %}<span class="cat-tag" style="background:{{ f.category.color }}12;color:{{ f.category.color }}">{{ f.category.name }}</span>{% else %}-{% endif %}</td>
+        <td><span class="trunc">{{ f.question }}</span></td>
+        <td><span class="trunc">{{ f.answer }}</span></td>
+        <td>{{ f.hit_count or 0 }}</td>
+        <td>
+          <button class="btn btn-g btn-s" onclick="editFaq({{ f.id }})">编辑</button>
+          <button class="btn btn-r btn-s" onclick="delFaq({{ f.id }})">删除</button>
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- ====== 书目面板 ====== -->
+  <div class="pane" id="pane1">
+    <div class="tbar">
+      <h3>馆藏书目 (显示前200条，共 {{ stats.book_count }} 本)</h3>
+      <div class="tbar-r">
+        <input class="sch" placeholder="搜索图书..." oninput="filterRows('bookTbl',this.value)">
+      </div>
+    </div>
+    <div class="tbl-wrap">
+    <table class="tbl" id="bookTbl">
+      <thead><tr><th>书名</th><th>作者</th><th>出版社</th><th>分类</th><th>索书号</th><th>位置</th><th>可借/总</th></tr></thead>
+      <tbody>
+      {% for b in books %}
+      <tr>
+        <td>{{ b.title }}</td><td>{{ b.author }}</td><td>{{ b.publisher }}</td>
+        <td>{{ b.category }}</td><td>{{ b.call_number }}</td><td>{{ b.location }}</td>
+        <td>{{ b.available_copies }}/{{ b.total_copies }}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- ====== 用户管理面板 ====== -->
+  <div class="pane" id="pane2">
+    <div class="tbar">
+      <h3>用户管理</h3>
+      <div class="tbar-r">
+        <input class="sch" placeholder="搜索用户..." oninput="filterRows('userTbl',this.value)">
+        <button class="btn btn-w" onclick="openUserModal()">添加用户</button>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+    <table class="tbl" id="userTbl">
+      <thead><tr><th style="width:40px">ID</th><th>用户名</th><th>昵称</th><th>邮箱</th><th style="width:70px">角色</th><th>注册时间</th><th style="width:140px">操作</th></tr></thead>
+      <tbody>
+      {% for u in users %}
+      <tr data-uid="{{ u.id }}">
+        <td>{{ u.id }}</td>
+        <td>{{ u.username }}</td>
+        <td>{{ u.nickname or '-' }}</td>
+        <td>{{ u.email }}</td>
+        <td><span class="role-tag {{ 'role-admin' if u.role=='admin' else 'role-user' }}">{{ '管理员' if u.role=='admin' else '学生' }}</span></td>
+        <td>{{ u.created_at.strftime('%Y-%m-%d %H:%M') if u.created_at else '-' }}</td>
+        <td>
+          <button class="btn btn-g btn-s" onclick="editUser({{ u.id }})">编辑</button>
+          <button class="btn btn-g btn-s" onclick="resetPwd({{ u.id }},'{{ u.username }}')">重置密码</button>
+          {% if u.id != current_user.id %}
+          <button class="btn btn-r btn-s" onclick="delUser({{ u.id }},'{{ u.username }}')">删除</button>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ编辑模态框 -->
+<div class="modal-bg" id="faqModal" onclick="if(event.target===this)this.classList.remove('show')">
+  <div class="modal">
+    <h3 id="faqModalTitle">添加FAQ</h3>
+    <input type="hidden" id="faqEditId">
+    <div class="fg"><label>分类</label><select id="faqCat"><option value="">请选择</option>{% for c in categories %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}</select></div>
+    <div class="fg"><label>问题</label><textarea id="faqQ" placeholder="输入问题"></textarea></div>
+    <div class="fg"><label>答案</label><textarea id="faqA" placeholder="输入答案" style="min-height:100px"></textarea></div>
+    <div class="fg"><label>关键词（逗号分隔）</label><input id="faqK" placeholder="关键词1,关键词2"></div>
+    <div class="modal-foot">
+      <button class="btn btn-g" onclick="closeFaqModal()">取消</button>
+      <button class="btn btn-a" onclick="saveFaq()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 用户编辑模态框 -->
+<div class="modal-bg" id="userModal" onclick="if(event.target===this)this.classList.remove('show')">
+  <div class="modal">
+    <h3 id="userModalTitle">添加用户</h3>
+    <input type="hidden" id="userEditId">
+    <div class="fg"><label>用户名</label><input id="userUname" placeholder="输入用户名"></div>
+    <div class="fg"><label>昵称</label><input id="userNick" placeholder="输入昵称"></div>
+    <div class="fg"><label>邮箱</label><input id="userEmail" placeholder="输入邮箱"></div>
+    <div class="fg"><label>密码（编辑时留空表示不修改）</label><input id="userPwd" type="password" placeholder="输入密码"></div>
+    <div class="fg"><label>角色</label><select id="userRole"><option value="user">学生</option><option value="admin">管理员</option></select></div>
+    <div class="modal-foot">
+      <button class="btn btn-g" onclick="closeUserModal()">取消</button>
+      <button class="btn btn-w" onclick="saveUser()">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// FAQ数据
+const faqMap={
+  {% for f in faqs %}{{ f.id }}:{q:{{ f.question|tojson }},a:{{ f.answer|tojson }},cat:{{ f.category_id or 'null' }},k:{{ (f.keywords or '')|tojson }}}{% if not loop.last %},{% endif %}
+  {% endfor %}
+};
+// 用户数据
+const userMap={
+  {% for u in users %}{{ u.id }}:{uname:{{ u.username|tojson }},nick:{{ (u.nickname or '')|tojson }},email:{{ u.email|tojson }},role:{{ u.role|tojson }}}{% if not loop.last %},{% endif %}
+  {% endfor %}
+};
+
+function switchTab(i){
+  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('on',j===i));
+  document.querySelectorAll('.pane').forEach((p,j)=>p.classList.toggle('on',j===i));
+}
+
+function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3000)}
+
+function filterRows(tid,kw){
+  kw=kw.toLowerCase();
+  document.querySelectorAll('#'+tid+' tbody tr').forEach(r=>r.style.display=r.textContent.toLowerCase().includes(kw)?'':'none');
+}
+
+// ===== FAQ操作 =====
+function openFaqModal(){
+  document.getElementById('faqModalTitle').textContent='添加FAQ';
+  document.getElementById('faqEditId').value='';
+  ['faqCat','faqQ','faqA','faqK'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('faqModal').classList.add('show');
+}
+function closeFaqModal(){document.getElementById('faqModal').classList.remove('show')}
+
+function editFaq(id){
+  const d=faqMap[id];if(!d)return;
+  document.getElementById('faqModalTitle').textContent='编辑FAQ';
+  document.getElementById('faqEditId').value=id;
+  document.getElementById('faqCat').value=d.cat||'';
+  document.getElementById('faqQ').value=d.q;
+  document.getElementById('faqA').value=d.a;
+  document.getElementById('faqK').value=d.k;
+  document.getElementById('faqModal').classList.add('show');
+}
+
+async function saveFaq(){
+  const id=document.getElementById('faqEditId').value;
+  const body={question:document.getElementById('faqQ').value,answer:document.getElementById('faqA').value,
+    category_id:document.getElementById('faqCat').value||null,keywords:document.getElementById('faqK').value};
+  if(!body.question||!body.answer){toast('问题和答案不能为空');return}
+  const r=await fetch(id?'/api/admin/faq/'+id:'/api/admin/faq',{method:id?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const d=await r.json();toast(d.message||d.error);closeFaqModal();setTimeout(()=>location.reload(),500);
+}
+
+async function delFaq(id){if(!confirm('确定删除？'))return;const r=await fetch('/api/admin/faq/'+id,{method:'DELETE'});const d=await r.json();toast(d.message);setTimeout(()=>location.reload(),500)}
+
+async function importFaq(inp){
+  const file=inp.files[0];if(!file)return;
+  const fd=new FormData();fd.append('file',file);
+  const r=await fetch('/api/admin/faq/import',{method:'POST',body:fd});
+  const d=await r.json();toast(d.message||d.error);inp.value='';setTimeout(()=>location.reload(),500);
+}
+
+// ===== 用户操作 =====
+function openUserModal(){
+  document.getElementById('userModalTitle').textContent='添加用户';
+  document.getElementById('userEditId').value='';
+  ['userUname','userNick','userEmail','userPwd'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('userUname').disabled=false;
+  document.getElementById('userRole').value='user';
+  document.getElementById('userModal').classList.add('show');
+}
+function closeUserModal(){document.getElementById('userModal').classList.remove('show')}
+
+function editUser(id){
+  const d=userMap[id];if(!d)return;
+  document.getElementById('userModalTitle').textContent='编辑用户';
+  document.getElementById('userEditId').value=id;
+  document.getElementById('userUname').value=d.uname;
+  document.getElementById('userUname').disabled=true;
+  document.getElementById('userNick').value=d.nick;
+  document.getElementById('userEmail').value=d.email;
+  document.getElementById('userPwd').value='';
+  document.getElementById('userRole').value=d.role;
+  document.getElementById('userModal').classList.add('show');
+}
+
+async function saveUser(){
+  const id=document.getElementById('userEditId').value;
+  const body={
+    username:document.getElementById('userUname').value,
+    nickname:document.getElementById('userNick').value,
+    email:document.getElementById('userEmail').value,
+    role:document.getElementById('userRole').value
+  };
+  const pwd=document.getElementById('userPwd').value;
+  if(pwd)body.password=pwd;
+  if(!id&&!body.username){toast('用户名不能为空');return}
+  if(!id&&!pwd){toast('请输入密码');return}
+  const url=id?'/api/admin/user/'+id:'/api/admin/user';
+  const r=await fetch(url,{method:id?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const d=await r.json();toast(d.message||d.error);closeUserModal();setTimeout(()=>location.reload(),500);
+}
+
+async function resetPwd(id,name){
+  const pwd=prompt('为 '+name+' 设置新密码：');
+  if(!pwd)return;
+  const r=await fetch('/api/admin/user/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pwd})});
+  const d=await r.json();toast(d.message||d.error);
+}
+
+async function delUser(id,name){
+  if(!confirm('确定删除用户 '+name+' ？该用户的聊天记录也会被删除。'))return;
+  const r=await fetch('/api/admin/user/'+id,{method:'DELETE'});
+  const d=await r.json();toast(d.message||d.error);setTimeout(()=>location.reload(),500);
+}
+</script>
+</body>
+</html>
